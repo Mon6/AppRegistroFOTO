@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -10,13 +11,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +29,9 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -48,7 +55,9 @@ public class AgregarRegistroActivity extends AppCompatActivity {
     private String [] storagePermissions;// solo almacenamiento
     // variables (constain datos para guardar)
     private Uri imageUri;
-    private String name, phone, email, dob, bio;
+    private String id, name, phone, email, dob, bio, addedTime, updatedTime;
+
+    private boolean isEditMode = false;
 
     //db helper
     private MyDbHelper dbHelper;
@@ -73,6 +82,48 @@ public class AgregarRegistroActivity extends AppCompatActivity {
         bioEt = findViewById(R.id.bioEt);
         saveBtn = findViewById(R.id.saveBtn);
 
+        //obtener los datos de la intencion
+        Intent intent = getIntent();
+        isEditMode = intent.getBooleanExtra("isEditMode", false);
+
+        //establer la vista de los datos
+        if (isEditMode) {
+
+            //Actualizar datos
+            actionBar.setTitle("Actualizar Registro");
+
+            id = intent.getStringExtra("ID");
+            name = intent.getStringExtra("NAME");
+            phone = intent.getStringExtra("PHONE");
+            email = intent.getStringExtra("EMAIL");
+            dob = intent.getStringExtra("DOB");
+            bio = intent.getStringExtra("BIO");
+            imageUri = Uri.parse(intent.getStringExtra("IMAGE"));
+            addedTime = intent.getStringExtra("ADDEDTIME");
+            updatedTime = intent.getStringExtra("UPDATEDTIME");
+
+            //set View data
+            nameEt.setText(name);
+            phoneEt.setText(phone);
+            emailEt.setText(email);
+            dobEt.setText(dob);
+            bioEt.setText(bio);
+            //sino se selecciona una imagen al agregr datos; el valor de la imagen ser "NULL"
+            if (imageUri.toString().equals("null")) {
+                //sino ahi imagen , set default
+                profileIv.setImageResource(R.drawable.ic_person_black);
+            } else {
+                profileIv.setImageURI(imageUri);
+            }
+
+        }
+
+        else {
+            //agregar datos
+            actionBar.setTitle("Agregar Registro");
+        }
+
+
         //Inicializar BD Helper
         dbHelper = new MyDbHelper(this);
 
@@ -94,34 +145,135 @@ public class AgregarRegistroActivity extends AppCompatActivity {
                 inputData();
             }
         });
+
+        dobEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick (View view){
+                switch (view.getId()) {
+                    case R.id.dobEt:
+                        showDatePickerDialog();
+                        break;
+                }
+            }
+        });
+
+    }
+
+    private void showDatePickerDialog() {
+        DatePickerFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     private void inputData(){
-        //get data
-        name = ""+nameEt.getText().toString().trim();
-        phone = ""+phoneEt.getText().toString().trim();
-        email = ""+emailEt.getText().toString().trim();
-        dob = ""+dobEt.getText().toString().trim();
-        bio = ""+bioEt.getText().toString().trim();
 
-        //guarda en la base de datos
-        String timestamp = ""+System.currentTimeMillis();
-        long id = dbHelper.insertRecord(
-                ""+name,
-                ""+imageUri,
-                ""+bio,
-                ""+phone,
-                ""+email,
-                ""+dob,
-                ""+timestamp,
-                ""+timestamp
-        );
+//        Toast.makeText(this,
+//                "Email:  " +validaEmail(emailEt) +"\n" +
+//                        "Nombre:  " + validaNombre(nameEt) +"\n" +
+//                        "Phone:  " + validaPhone(phoneEt) +"\n" +
+//                        "Fecha:  " + validarFecha(dobEt) +"\n"
+//
+//                ,Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(this, "Registro agregado contra ID: "+id, Toast.LENGTH_SHORT).show();
+        if (validaNombre(nameEt)) {
+
+            if (validaEmail(emailEt)) {
+                nameEt.setTextColor(Color.GREEN);
+
+
+                if (validaPhone(phoneEt)) {
+                    emailEt.setTextColor(Color.GREEN);
+
+                    if (validarFecha(dobEt)) {
+                        phoneEt.setTextColor(Color.GREEN);
+                        dobEt.setTextColor(Color.GREEN);
+
+                        //get data
+                        name = ""+nameEt.getText().toString().trim();
+                        phone = ""+phoneEt.getText().toString().trim();
+                        email = ""+emailEt.getText().toString().trim();
+                        dob = ""+dobEt.getText().toString().trim();
+                        bio = ""+bioEt.getText().toString().trim();
+
+                        if (isEditMode){
+                            //actualizar datos
+
+                            String timestamp = ""+System.currentTimeMillis();
+                            dbHelper.updateRecord(
+                                    ""+id,
+                                    ""+name,
+                                    ""+imageUri,
+                                    ""+bio,
+                                    ""+phone,
+                                    ""+email,
+                                    ""+dob,
+                                    ""+addedTime,//este dato no cambia fecha registro
+                                    ""+timestamp//Fecha de actualizacion cambia
+
+                            );
+
+                            Toast.makeText(this, "Actualizando... ", Toast.LENGTH_SHORT).show();
+
+                        }
+                        else{
+                            //new datos
+                            //guarda en la base de datos
+                            String timestamp = ""+System.currentTimeMillis();
+                            long id = dbHelper.insertRecord(
+                                    ""+name,
+                                    ""+imageUri,
+                                    ""+bio,
+                                    ""+phone,
+                                    ""+email,
+                                    ""+dob,
+                                    ""+timestamp,
+                                    ""+timestamp
+                            );
+
+                            Toast.makeText(this, "Registro agregado contra ID: "+id, Toast.LENGTH_SHORT).show();
+
+                            nameEt.setText("");
+                            phoneEt.setText("");
+                            emailEt.setText("");
+                            dobEt.setText("");
+                            bioEt.setText("");
+                        }
+
+
+                    } else {
+                        Toast.makeText(this,"Escribe una fecha correcta utilizando el formato dd/mm/yyyy",Toast.LENGTH_SHORT).show();
+                        phoneEt.setTextColor(Color.GREEN);
+                        dobEt.setTextColor(Color.RED);
+                    }
+
+                } else {
+                    Toast.makeText(this,"Escribe tu numero con 10 digitos",Toast.LENGTH_SHORT).show();
+                    emailEt.setTextColor(Color.GREEN);
+                    phoneEt.setTextColor(Color.RED);
+                }
+
+            } else {
+                Toast.makeText(this,"Tu Email no es correcto",Toast.LENGTH_SHORT).show();
+                nameEt.setTextColor(Color.GREEN);
+                emailEt.setTextColor(Color.RED);
+            }
+
+        } else {
+            Toast.makeText(this,"Ingresa un Nombre correcto",Toast.LENGTH_SHORT).show();
+            nameEt.setTextColor(Color.RED);
+        }
+
+//        validaNombre(nameEt);
+//        validaEmail(emailEt);
+//        validaPhone(phoneEt);
+//        validarFecha(dobEt);
+
+
+
     }
+
     private void imagePickDialog(){
         // opciones para mostrar en el diálogo
-        String[] options = {"Camara", "Galeria"};
+        String[] options = {"Camara"/*, "Galeria"*/};
         //dialogo
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //Titulo
@@ -142,15 +294,15 @@ public class AgregarRegistroActivity extends AppCompatActivity {
                     }
 
                 }
-                else if (which==1){
-                    if (!checkStoragePermission()){
-                        requestStoragePermission();
-                    }
-                    else{
-                        // permiso ya otorgado
-                        PickFromGallery();
-                    }
-                }
+//                else if (which==1){
+//                    if (!checkStoragePermission()){
+//                        requestStoragePermission();
+//                    }
+//                    else{
+//                        // permiso ya otorgado
+////                        PickFromGallery();
+//                    }
+//                }
             }
         });
 
@@ -299,4 +451,88 @@ public class AgregarRegistroActivity extends AppCompatActivity {
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    public static boolean validaNombre(EditText nameEt) {
+        String nombreInput = nameEt.getText().toString();
+        if (!(nombreInput == null || nombreInput.equals(""))){
+            for (int x = 0; x < nombreInput.length(); x++) {
+                char c = nombreInput.charAt(x);
+                // Si no está entre a y z, ni entre A y Z, ni es un espacio
+                if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ')) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private Boolean validaEmail(EditText emailEt)   {
+        String emailInput = emailEt.getText().toString();
+
+        if (!emailInput.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
+//            Toast.makeText(this, "Email buien", Toast.LENGTH_SHORT).show();
+            return true;
+        }else {
+//            Toast.makeText(this, "Email mal", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    private Boolean validaPhone (EditText phoneEt){
+        String phone = phoneEt.getText().toString();
+        if (phone.length() == 10)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean validarFecha(EditText dobEt) {
+        String fecha = dobEt.getText().toString();
+        String dia = "00";
+        String mes = "00";
+        String año = "0000";
+
+
+        try {
+             dia = fecha.substring(0,2);
+             mes = fecha.substring(3,5);
+             año = fecha.substring(6,10);
+        }catch (Exception e){
+
+//            e.fillInStackTrace();
+        }
+
+
+//        Toast.makeText(this,
+//                "DIA:  " +dia +"\n" +
+//                        "MES:  " + mes +"\n" +
+//                        "AÑO:  " + año +"\n" +
+//                        "Fecha:  " + fecha +"\n"
+//
+//                ,Toast.LENGTH_LONG).show();
+
+        boolean correcto = false;
+
+        try {
+            //Formato de fecha (día/mes/año)
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+            formatoFecha.setLenient(false);
+            //Comprobación de la fecha
+            formatoFecha.parse(dia + "/" + mes + "/" + año);
+            correcto = true;
+        } catch (ParseException e) {
+            //Si la fecha no es correcta, pasará por aquí
+            correcto = false;
+        }
+
+        return correcto;
+    }
+
+
 }
+
+

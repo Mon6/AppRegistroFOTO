@@ -24,72 +24,71 @@
         android:id="@+id/nameEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/profileIv"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
         android:background="@drawable/shape_rectangle"
-        android:padding="10dp"
-        android:layout_below="@+id/profileIv"
-        android:inputType="textPersonName|textCapWords"
-        android:hint="Nombres"/>
+        android:hint="Nombre Completo"
+        android:inputType="textPersonName"
+        android:padding="10dp" />
 
     <!-- EditText: Telefono de Usuario-->
     <EditText
         android:id="@+id/phoneEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/nameEt"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
         android:background="@drawable/shape_rectangle"
-        android:padding="10dp"
-        android:layout_below="@+id/nameEt"
+        android:hint="Teléfono (10 digitos)"
         android:inputType="phone"
-        android:hint="Teléfono"/>
+        android:padding="10dp" />
 
     <!-- EditText: Email de Usuario-->
     <EditText
         android:id="@+id/emailEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneEt"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
         android:background="@drawable/shape_rectangle"
-        android:padding="10dp"
-        android:layout_below="@+id/phoneEt"
+        android:hint="Correo Electrónico"
         android:inputType="textEmailAddress"
-        android:hint="Correo Electrónico"/>
+        android:padding="10dp" />
 
     <!-- EditText: DOB de Usuario-->
     <EditText
         android:id="@+id/dobEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/emailEt"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
         android:background="@drawable/shape_rectangle"
-        android:padding="10dp"
-        android:layout_below="@+id/emailEt"
-        android:inputType="date"
-        android:hint="dd/mm/yy"/>
+        android:hint="dd/mm/yyyy"
+        android:padding="10dp" />
 
     <!-- EditText: Bio Info de Usuario-->
     <EditText
         android:id="@+id/bioEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/dobEt"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_below="@+id/dobEt"
-        android:minHeight="90dp"
-        android:gravity="start"
         android:background="@drawable/shape_rectangle"
-        android:padding="10dp"
+        android:gravity="start"
+        android:hint="Cordenadas"
         android:inputType="textCapSentences|textMultiLine"
-        android:hint="Descripción Corta"/>
+        android:minHeight="90dp"
+        android:padding="10dp" />
 
     <!-- FAB: Agregar Registro-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

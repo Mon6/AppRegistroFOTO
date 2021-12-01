@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="1dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="3dp"
+    app:cardBackgroundColor="@color/colorWhite">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileIv"
+            android:src="@drawable/ic_person_black"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:civ_border_width="1dp"
+            android:layout_marginRight="20dp"
+            app:civ_border_color="@color/colorGray"
+            app:civ_border_overlay="true"/>
+
+        <LinearLayout
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toStartOf="@id/moreBtn"
+            android:layout_toEndOf="@id/profileIv"
+            android:layout_toRightOf="@id/profileIv"
+            android:layout_toLeftOf="@id/moreBtn">
+
+            <!--Nombre de Usuario-->
+            <TextView
+                android:id="@+id/nameTv"
+                android:text="Nombre"
+                android:textSize="18sp"
+                android:textColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!--Telefono de Usuario-->
+            <TextView
+                android:id="@+id/phoneTv"
+                android:text="Teléfono"
+                android:textColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!--Email de Usuario-->
+            <TextView
+                android:id="@+id/emailTv"
+                android:text="Email"
+                android:textColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!--Fecha de Usuario-->
+            <TextView
+                android:id="@+id/dobTv"
+                android:text="Fecha"
+                android:textColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!--Para mostrar opciones como eliminar, editar, etc.-->
+        <ImageButton
+            android:id="@+id/moreBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more_black"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

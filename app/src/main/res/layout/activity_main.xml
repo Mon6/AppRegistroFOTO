@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--RecyclerView: show records -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recordsRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/row_record"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"/>
+
     <!--FAB Boton: Iniciar AgregarRegistroActivity para añadir y editar Registro-->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addRecordBtn"

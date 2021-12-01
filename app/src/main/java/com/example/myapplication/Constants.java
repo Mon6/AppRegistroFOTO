@@ -1,10 +1,8 @@
 package com.example.myapplication;
-
 public class Constants {
     // nombre base de datos
-    //version de base de datos
     public static final String DB_NAME = "My_RECORDS_DB";
-
+    //version de base de datos
     public static final int DB_VERSION = 1;
     //nombre de la tabla
     public static final String TABLE_NAME = "MY_RECORDS_TABLE";

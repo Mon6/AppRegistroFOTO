@@ -10,6 +10,7 @@
     
     <color name="colorBlack">#000</color>
     <color name="colorwhite">#fff</color>
+    <color name="colorWhite">#fff</color>
     <color name="colorGray">#e4e4e4</color>
     <color name="colorGray1">#c0b6b6</color>
 
